@@ -1,0 +1,17 @@
+package: github.com/diablowu/unit-ctl
+import:
+- package: github.com/levigross/grequests
+  version: ~0.10.0
+- package: gopkg.in/alecthomas/kingpin.v2
+  version: ~2.2.6
+- package: github.com/alecthomas/units
+- package: github.com/alecthomas/template
+- package: golang.org/x/sys
+- package: golang.org/x/net
+- package: golang.org/x/time
+- package: github.com/davecgh/go-spew
+  version: 1.1.0
+  subpackages:
+  - spew
+- package: github.com/olekukonko/tablewriter
+  version: ~0.0.1
