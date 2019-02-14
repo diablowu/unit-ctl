@@ -47,16 +47,16 @@ func (ds DeployService) Status(args GetDmStatusArgs) {
 	}
 }
 
-func (ds DeployService) Add(args AddDmArgs) {
-}
-
-func (ds DeployService) Update(args AddDmArgs) (*UpdateDmResponse, error) {
-
+func (ds DeployService) AddOrUpdate(args AddDmArgs, newDeploy bool) (*UpdateDmResponse, error) {
 	if *args.ModelVersion == "" {
 		args.ModelVersion = nil
 	}
 
 	method := "deployment/updateModelVersion"
+	if newDeploy {
+		method = "deployment/add"
+	}
+
 	reqOpts := new(grequests.RequestOptions)
 	reqOpts.JSON = args
 	if rsp, err := grequests.Post(ds.GetFullUrl(method), reqOpts); err == nil && rsp.Ok {
@@ -106,6 +106,7 @@ func (ds DeployService) ListWatch(args ListDmArgs) {
 	}
 
 }
+
 //func (ds DeployService) ListDm(ctx *kingpin.ParseContext) error {
 //	ctx.SelectedCommand.Model().Flags[0]
 //}

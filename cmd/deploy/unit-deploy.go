@@ -63,11 +63,13 @@ func main() {
 		}
 	case cmdAdd.FullCommand():
 		{
-
+			if _, err := deployService.AddOrUpdate(cmdAddArgs, true); err != nil {
+				log.Fatal(err)
+			}
 		}
 	case cmdUpdate.FullCommand():
 		{
-			if _, err := deployService.Update(cmdUpdateArgs); err != nil {
+			if _, err := deployService.AddOrUpdate(cmdUpdateArgs, false); err != nil {
 				log.Fatal(err)
 			}
 
