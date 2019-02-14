@@ -16,12 +16,6 @@ const (
 func main() {
 	mainApp := kingpin.New(PROG_NAME, INTRO)
 
-	cred := new(auth.Credential)
-
-	cred.AppKey = mainApp.Flag("ak", "app key").Required().String()
-	cred.SecretKey = mainApp.Flag("sk", "secret key").Required().String()
-	cred.GrantType = mainApp.Flag("grant", "grant type").Default(auth.DefaultGrantType).String()
-
 	cmdStatus := mainApp.Command("status", "get statue")
 	cmdStatusArgs := deployment.GetDmStatusArgs{}
 	cmdStatusArgs.BotId = cmdStatus.Flag("bot", "bot id").Required().Int()
@@ -48,7 +42,9 @@ func main() {
 
 	cmd := kingpin.MustParse(mainApp.Parse(os.Args[1:]))
 
-	deployService := deployment.NewDeployService(cred)
+	authCtx := auth.LoadAuthContext(auth.ConfigFilePath)
+
+	deployService := deployment.NewDeployService(authCtx.Token())
 	switch cmd {
 	case cmdStatus.FullCommand():
 		{

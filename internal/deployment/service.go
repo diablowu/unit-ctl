@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/diablowu/unit-ctl/internal"
-	"github.com/diablowu/unit-ctl/internal/auth"
 	"github.com/levigross/grequests"
 	"github.com/olekukonko/tablewriter"
 	"log"
@@ -18,11 +17,9 @@ type DeployService struct {
 	internal.ServiceBaseInfo
 }
 
-func NewDeployService(cred *auth.Credential) (DeployService) {
-	token := cred.Auth().AccessToken
-
+func NewDeployService(accessToken string) (DeployService) {
 	ds := DeployService{}
-	ds.AccessToken = token
+	ds.AccessToken = accessToken
 	ds.Endpoint = internal.ManageEndpoint
 	return ds
 }
@@ -109,6 +106,10 @@ func (ds DeployService) ListWatch(args ListDmArgs) {
 	}
 
 }
+//func (ds DeployService) ListDm(ctx *kingpin.ParseContext) error {
+//	ctx.SelectedCommand.Model().Flags[0]
+//}
+
 func (ds DeployService) List(args ListDmArgs) (*ListDmResponse, error) {
 	method := "deployment/list"
 	reqOpts := new(grequests.RequestOptions)
