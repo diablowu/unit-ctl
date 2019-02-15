@@ -14,8 +14,6 @@ const (
 func main() {
 	mainApp := kingpin.New(PROG_NAME, INTRO)
 
-	//cred := new(auth.Credential)
-
 	authService := auth.AuthService{}
 
 	mainApp.Command("list", "list context").Action(authService.List)

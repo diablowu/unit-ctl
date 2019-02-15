@@ -3,7 +3,6 @@ package deployment
 import (
 	"errors"
 	"fmt"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/diablowu/unit-ctl/internal"
 	"github.com/diablowu/unit-ctl/internal/utils"
 	"github.com/levigross/grequests"
@@ -30,7 +29,6 @@ func NewDeployService(accessToken string) (DeployService) {
 func (ds DeployService) StatusAction(ctx *kingpin.ParseContext) error {
 	args := new(GetDmStatusArgs)
 	utils.ExtractFlag(ctx.SelectedCommand.Model().Flags, args)
-	spew.Dump(args)
 	ds.Status(*args)
 	return nil
 }
