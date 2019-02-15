@@ -3,21 +3,21 @@ package deployment
 import "github.com/diablowu/unit-ctl/internal"
 
 type GetDmStatusArgs struct {
-	BotId *int `json:"botId"`
-	DmId  *int `json:"deploymentId"`
+	BotId int `json:"botId" flag:"bot"`
+	DmId  int `json:"deploymentId" flag:"dm"`
 }
 
 type ListDmArgs struct {
-	BotId    *int  `json:"botId"`
-	PageNo   *int  `json:"pageNo"`
-	PageSize *int  `json:"pageSize"`
-	Watch    *bool `json:"-"`
+	BotId    int  `json:"botId" flag:"bot"`
+	PageNo   int  `json:"pageNo" flag:"pn"`
+	PageSize int  `json:"pageSize" flag:"ps"`
+	Watch    bool `json:"-" flag:"watch"`
 }
 
 type AddDmArgs struct {
-	BotId        *int    `json:"botId"`
-	Region       *string `json:"region"`
-	ModelVersion *string `json:"modelVersion,omitempty"`
+	BotId        int    `json:"botId" flag:"bot"`
+	Region       string `json:"region" flag:"region"`
+	ModelVersion string `json:"modelVersion,omitempty" flag:"model-version"`
 }
 
 type ListDmResponse struct {

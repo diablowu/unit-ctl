@@ -3,9 +3,12 @@ package deployment
 import (
 	"errors"
 	"fmt"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/diablowu/unit-ctl/internal"
+	"github.com/diablowu/unit-ctl/internal/utils"
 	"github.com/levigross/grequests"
 	"github.com/olekukonko/tablewriter"
+	"gopkg.in/alecthomas/kingpin.v2"
 	"log"
 	"os"
 	"os/signal"
@@ -22,6 +25,14 @@ func NewDeployService(accessToken string) (DeployService) {
 	ds.AccessToken = accessToken
 	ds.Endpoint = internal.ManageEndpoint
 	return ds
+}
+
+func (ds DeployService) StatusAction(ctx *kingpin.ParseContext) error {
+	args := new(GetDmStatusArgs)
+	utils.ExtractFlag(ctx.SelectedCommand.Model().Flags, args)
+	spew.Dump(args)
+	ds.Status(*args)
+	return nil
 }
 
 func (ds DeployService) Status(args GetDmStatusArgs) {
@@ -47,11 +58,27 @@ func (ds DeployService) Status(args GetDmStatusArgs) {
 	}
 }
 
-func (ds DeployService) AddOrUpdate(args AddDmArgs, newDeploy bool) (*UpdateDmResponse, error) {
-	if *args.ModelVersion == "" {
-		args.ModelVersion = nil
+func (ds DeployService) AddAction(ctx *kingpin.ParseContext) error {
+	args := new(AddDmArgs)
+	utils.ExtractFlag(ctx.SelectedCommand.Model().Flags, args)
+	if _, err := ds.AddOrUpdate(*args, true); err != nil {
+		return err
+	} else {
+		return nil
 	}
+}
 
+func (ds DeployService) UpdateAction(ctx *kingpin.ParseContext) error {
+	args := new(AddDmArgs)
+	utils.ExtractFlag(ctx.SelectedCommand.Model().Flags, args)
+	if _, err := ds.AddOrUpdate(*args, false); err != nil {
+		return err
+	} else {
+		return nil
+	}
+}
+
+func (ds DeployService) AddOrUpdate(args AddDmArgs, newDeploy bool) (*UpdateDmResponse, error) {
 	method := "deployment/updateModelVersion"
 	if newDeploy {
 		method = "deployment/add"
@@ -66,11 +93,10 @@ func (ds DeployService) AddOrUpdate(args AddDmArgs, newDeploy bool) (*UpdateDmRe
 				table := tablewriter.NewWriter(os.Stdout)
 				table.SetHeader([]string{"BotID", "DeploymentID", "Region", "ModelVersion"})
 				mv := "latest"
-				if args.ModelVersion != nil {
-					mv = *args.ModelVersion
+				if args.ModelVersion != "" {
+					mv = args.ModelVersion
 				}
-
-				table.Append([]string{strconv.Itoa(*args.BotId), dmUpdate.Result.DeploymentID, *args.Region, mv})
+				table.Append([]string{strconv.Itoa(args.BotId), dmUpdate.Result.DeploymentID, args.Region, mv})
 				table.Render()
 				return &dmUpdate, nil
 			} else {
@@ -107,9 +133,21 @@ func (ds DeployService) ListWatch(args ListDmArgs) {
 
 }
 
-//func (ds DeployService) ListDm(ctx *kingpin.ParseContext) error {
-//	ctx.SelectedCommand.Model().Flags[0]
-//}
+func (ds DeployService) ListAction(ctx *kingpin.ParseContext) error {
+	args := new(ListDmArgs)
+	utils.ExtractFlag(ctx.SelectedCommand.Model().Flags, args)
+
+	if args.Watch {
+		ds.ListWatch(*args)
+	} else {
+		if _, err := ds.List(*args); err != nil {
+			return err
+		} else {
+			return nil
+		}
+	}
+	return nil
+}
 
 func (ds DeployService) List(args ListDmArgs) (*ListDmResponse, error) {
 	method := "deployment/list"

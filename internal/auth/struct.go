@@ -51,10 +51,10 @@ func LoadAuthContext(path string) (*AuthContext) {
 }
 
 type Credential struct {
-	Name      string `fn:"name"`
-	AppKey    string `fn:"ak"`
-	SecretKey string `fn:"sk"`
-	GrantType string `fn:"grant"`
+	Name      string `flag:"name"`
+	AppKey    string `flag:"ak"`
+	SecretKey string `flag:"sk"`
+	GrantType string `flag:"grant"`
 }
 
 // 生成access_token获取的query string
